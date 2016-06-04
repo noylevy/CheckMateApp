@@ -10,6 +10,7 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.noy.finalprojectdesign.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,8 +18,6 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.List;
-
-import finalproject.finalproject.Utils;
 
 /**
  * Created by Anna on 05-Mar-16.
