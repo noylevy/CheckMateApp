@@ -6,7 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import finalproject.finalproject.Model.Model;
+import com.noy.finalprojectdesign.Model.Model;
+
 
 /**
  * Created by adi on 06-Mar-16.

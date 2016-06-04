@@ -8,10 +8,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".suggestionsList" >
+        <activity android:label="@string/mainTitle" android:name=".suggestionsList" >
 
         </activity>
-        <activity android:name=".SearchActivity" >
+        <activity android:label="@string/mainTitle" android:name=".SearchActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

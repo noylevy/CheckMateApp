@@ -2,4 +2,6 @@
     <string name="app_name">FinalProjectDesign</string>
     <string name="placeName">Name</string>
     <string name="placeDetails">Details</string>
+    <string name="mainTitle">CheckMate</string>
+
 </resources>
