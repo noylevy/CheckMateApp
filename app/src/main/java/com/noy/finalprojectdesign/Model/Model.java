@@ -1,12 +1,15 @@
 package com.noy.finalprojectdesign.Model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.AccessToken;
+import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
@@ -16,8 +19,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+
 
 /**
  * Created by Anna on 05-Mar-16.
@@ -55,6 +62,10 @@ public class Model {
         public void onResult(Checkin checkin);
     }
 
+    public interface GetCheckinListnListener {
+        public void onResult(List<Checkin> checkin);
+    }
+
     public interface SimpleSuccessListener {
         public void onResult(boolean result);
     }
@@ -73,7 +84,51 @@ public class Model {
         return local.deleteCheckin(type, time);
     }
 
-    public void getLocalCheckinAsync(final GetCheckinListener listener, final String type, final int time) {
+    public List<Checkin> getLocalCheckins(List<Integer> time){
+        return local.getCheckinByTime(time);
+    }
+
+/*
+    public void getLocalCheckinsAsync(final GetCheckinListnListener listener, final List<Integer> time) {
+        class GetCheckinAsyncTask extends AsyncTask<String, String, List<Checkin>> {
+            @Override
+            protected List<Checkin> doInBackground(String... params) {
+                return local.getCheckinByTime(time);
+            }
+
+            @Override
+            protected void onPostExecute(List<Checkin> checkin) {
+                super.onPostExecute(checkin);
+                listener.onResult(checkin);
+            }
+        }
+
+        GetCheckinAsyncTask task = new GetCheckinAsyncTask();
+        task.execute();
+    }
+*/
+
+
+    public void getLocalCheckinsAsync(final GetCheckinListnListener listener, final String type, final List<Integer> time) {
+        class GetCheckinAsyncTask extends AsyncTask<String, String, List<Checkin>> {
+            @Override
+            protected List<Checkin> doInBackground(String... params) {
+                return local.getCheckinByTypeAndTime(type,time);
+            }
+
+            @Override
+            protected void onPostExecute(List<Checkin> checkin) {
+                super.onPostExecute(checkin);
+                listener.onResult(checkin);
+            }
+        }
+
+        GetCheckinAsyncTask task = new GetCheckinAsyncTask();
+        task.execute();
+    }
+
+
+    public void getLocalCheckinsAsync(final GetCheckinListener listener, final String type, final int time) {
         class GetCheckinAsyncTask extends AsyncTask<String, String, Checkin> {
             @Override
             protected Checkin doInBackground(String... params) {

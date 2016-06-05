@@ -19,6 +19,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.noy.finalprojectdesign.Model.Model;
+import com.noy.finalprojectdesign.Receivers.AlarmReceiver;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -58,6 +59,7 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getHash();
+        Model.getInstance().init(this.getApplicationContext());
 
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_login);
@@ -69,7 +71,6 @@ public class LoginActivity extends Activity {
 
             callbackManager = CallbackManager.Factory.create();
 
-            Model.getInstance().init(this.getApplicationContext());
             Model.getInstance().setLastSyncTime(null);
 
             loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -77,7 +78,7 @@ public class LoginActivity extends Activity {
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-
+                    AlarmReceiver.getInstance().init(getApplicationContext());
                 }
 
                 @Override

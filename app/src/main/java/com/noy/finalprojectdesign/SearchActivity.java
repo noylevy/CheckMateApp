@@ -16,8 +16,11 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
+import com.noy.finalprojectdesign.Model.Checkin;
+import com.noy.finalprojectdesign.Model.Model;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -26,8 +29,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 public class SearchActivity extends Activity {
@@ -36,7 +43,7 @@ public class SearchActivity extends Activity {
     private final static String RTL_CHAR = "\u200E";
 
     EditText location;
-    TimeEditText tet;
+    static TimeEditText tet;
     DateEditText det;
     LatLng locLat;
     Button searchBtn;
@@ -70,7 +77,13 @@ public class SearchActivity extends Activity {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String time[] = tet.getText().toString().split(":");
+                /*int userId = data.findPath("USER_ID").asInt();
+                Long time = data.findPath("TIME").asLong();
+                String lng = data.findPath("LNG").asText();
+                String lat = data.findPath("LAT").asText();
+                JsonNode types = data.findPath("TYPES");*/
+
+                String time[] = SearchActivity.tet.getText().toString().split(":");
                 String date[] = det.getText().toString().split("/");
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(new Integer(date[0]), new Integer(date[1]), new Integer(date[2]), new Integer(time[0]), new Integer(time[1]));
@@ -79,7 +92,7 @@ public class SearchActivity extends Activity {
                         getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
-                    new GetDataFromServer().execute();
+                    new GetDataFromServer(calendar, locLat).execute();
                 } else {
                     Log.d("SEARCH_SERVER", "no connection");
                 }
@@ -105,6 +118,15 @@ public class SearchActivity extends Activity {
     }
 
     private class GetDataFromServer extends AsyncTask<String, Void, String> {
+
+        protected  Calendar cal;
+        protected  LatLng latLng;
+
+        public GetDataFromServer(Calendar cal, LatLng latLng){
+            this.cal = cal;
+            this.latLng = latLng;
+        }
+
         @Override
         protected String doInBackground(String... urls) {
             Log.d("SEARCH_START", "start");
@@ -115,9 +137,18 @@ public class SearchActivity extends Activity {
             StringBuilder jsonResults = new StringBuilder();
 
             try {
+
+                JSONObject data = new JSONObject();
+                data.put("USER_ID", 1);
+                data.put("TIME", cal.getTimeInMillis());
+                data.put("LNG", latLng.longitude);
+                data.put("LAT", latLng.latitude);
+                data.put("TYPES", prepareDataToServer(cal));
+
                 //url = new URL("http://localhost:8181/CheckMateServer/recommendation");
                 //url = new URL("http://localhost:9000/Recommandations/1/123456/34.819934/32.088674/''");
                 url = new URL("http://localhost:9000/Recommandations/1/123456/34.819934/32.088674");
+                //TODO can open connection - toast and return to search.
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setDoOutput(true);
@@ -125,18 +156,19 @@ public class SearchActivity extends Activity {
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
 
-                JSONArray checkIns = new JSONArray();
+
+                /*JSONArray checkIns = new JSONArray();
                 JSONObject checkIn = new JSONObject();
                 checkIn.put("type", "cafe");
                 checkIn.put("count", 7);
-                checkIns.put(checkIn);
+                checkIns.put(checkIn);*/
 
-                JSONObject data = new JSONObject();
-                data.put("USER_ID", 1);
-                data.put("TIME", Calendar.getInstance().getTimeInMillis());
-                data.put("LNG", 34.819934);
-                data.put("LAT", 32.088674);
-                data.put("TYPES", checkIns);
+//                JSONObject data = new JSONObject();
+//                data.put("USER_ID", 1);
+//                data.put("TIME", cal.getTimeInMillis());
+//                data.put("LNG", latLng.longitude);
+//                data.put("LAT", latLng.latitude);
+//                data.put("TYPES", prepareDataToServer(cal));
 
                 wr.write(data.toString());
                 //urlConnection.setRequestProperty("Connection", "keep-alive");
@@ -173,10 +205,52 @@ public class SearchActivity extends Activity {
             return "no results:(";
         }
 
+
+
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
             Log.d("SEARCH_RESULTS", result);
+        }
+
+        public JSONArray prepareDataToServer(Calendar cal){
+
+            Utils.TimePart currentTimePart =  Utils.TimePart.getTimePart(cal);
+            Utils.TimePart nextTimePart = currentTimePart.getNext();
+            Utils.TimePart prevTimePart = currentTimePart.getPrevious();
+
+            List<Integer> times = new ArrayList<Integer>();
+            times.add(currentTimePart.ordinal());
+            times.add(nextTimePart.ordinal());
+            times.add(prevTimePart.ordinal());
+            List<Checkin> checkins = Model.getInstance().getLocalCheckins(times);
+
+            HashMap<String, Integer> checkinsMap = new HashMap<String, Integer>();
+            for (Checkin checkin : checkins) {
+                if (checkinsMap.containsKey(checkin.getType())) {
+                    checkinsMap.put(checkin.getType(), checkin.getCount() + checkinsMap.get(checkin.getType()));
+                } else {
+                    checkinsMap.put(checkin.getType(), checkin.getCount());
+                }
+            }
+
+            JSONArray jarray = new JSONArray();
+            try {
+                Iterator it = checkinsMap.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    JSONObject jobj = new JSONObject();
+
+                    jobj.put("type", pair.getKey());
+                    jobj.put("count", pair.getValue());
+
+                    jarray.put(jobj);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return jarray;
         }
     }
 }

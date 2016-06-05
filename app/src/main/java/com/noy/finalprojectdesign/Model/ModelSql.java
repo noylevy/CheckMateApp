@@ -15,7 +15,7 @@ public class ModelSql {
     private Helper dbHelper;
 
     public void init(Context context) {
-        if (dbHelper == null){
+            if (dbHelper == null){
             dbHelper = new Helper(context);
         }
     }
@@ -27,6 +27,15 @@ public class ModelSql {
     public Checkin getCheckinByTypeAndTime(String type, int time){
         return CheckinSql.getCheckinByTypeAndTime(dbHelper, type, time);
     }
+
+    public List<Checkin> getCheckinByTypeAndTime(String type, List<Integer> time){
+        return CheckinSql.getCheckinByTypeAndTime(dbHelper, type, time);
+    }
+
+    public List<Checkin> getCheckinByTime(List<Integer> time){
+        return CheckinSql.getCheckinsByTime(dbHelper, time);
+    }
+
 
     public long addOrUpdateCheckin(Checkin checkin){
         return CheckinSql.addOrUpdate(dbHelper, checkin);
