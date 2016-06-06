@@ -4,4 +4,9 @@
     <string name="placeDetails">Details</string>
     <string name="mainTitle">CheckMate</string>
 
+    <string name="title_activity_login">Sign in</string>
+
+    <string name="facebook_app_id">979217132144477</string>
+    <string name="title_activity_facebook_login">Login With Facebook</string>
+
 </resources>

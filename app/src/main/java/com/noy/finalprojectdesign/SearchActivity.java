@@ -1,32 +1,33 @@
 package com.noy.finalprojectdesign;
 
 import android.app.Activity;
-import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.places.*;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 
-import org.apache.http.HttpResponse;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 
 public class SearchActivity extends Activity {
@@ -69,28 +70,18 @@ public class SearchActivity extends Activity {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String time[] =tet.getText().toString().split(":");
-                String date[] =det.getText().toString().split("/");
+                String time[] = tet.getText().toString().split(":");
+                String date[] = det.getText().toString().split("/");
                 Calendar calendar = Calendar.getInstance();
-                calendar.set(new Integer(date[0]),new Integer(date[1]),new Integer(date[2]),new Integer(time[0]),new Integer( time[1]));
+                calendar.set(new Integer(date[0]), new Integer(date[1]), new Integer(date[2]), new Integer(time[0]), new Integer(time[1]));
 
-                try {
-                    HttpClient httpClient = new DefaultHttpClient();
-                    HttpGet get = new HttpGet(
-                            "http://X.X.X.X:8080/HearIt/services/AuthMySQL");
-                    get.setHeader("content-type", "application/json");
-
-                    JSONObject data = new JSONObject();
-                    data.put("calander", calendar.getTimeInMillis());
-                    data.put("location", locLat);
-
-                    StringEntity entity = new StringEntity(data.toString());
-                    //get.setEntity(entity);
-                    HttpResponse resp = httpClient.execute(get);
-                    //return EntityUtils.toString(resp.getEntity());
-
-                } catch (Exception E) {
-                    E.printStackTrace();
+                ConnectivityManager connMgr = (ConnectivityManager)
+                        getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    new GetDataFromServer().execute();
+                } else {
+                    Log.d("SEARCH_SERVER", "no connection");
                 }
 
                 Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
@@ -98,7 +89,6 @@ public class SearchActivity extends Activity {
             }
         });
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -111,6 +101,82 @@ public class SearchActivity extends Activity {
                     locLat = place.getLatLng();
                 }
                 break;
+        }
+    }
+
+    private class GetDataFromServer extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            Log.d("SEARCH_START", "start");
+            android.os.Debug.waitForDebugger();
+
+            URL url;
+            HttpURLConnection urlConnection = null;
+            StringBuilder jsonResults = new StringBuilder();
+
+            try {
+                //url = new URL("http://localhost:8181/CheckMateServer/recommendation");
+                //url = new URL("http://localhost:9000/Recommandations/1/123456/34.819934/32.088674/''");
+                url = new URL("http://localhost:9000/Recommandations/1/123456/34.819934/32.088674");
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoOutput(true);
+
+                urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+
+                JSONArray checkIns = new JSONArray();
+                JSONObject checkIn = new JSONObject();
+                checkIn.put("type", "cafe");
+                checkIn.put("count", 7);
+                checkIns.put(checkIn);
+
+                JSONObject data = new JSONObject();
+                data.put("USER_ID", 1);
+                data.put("TIME", Calendar.getInstance().getTimeInMillis());
+                data.put("LNG", 34.819934);
+                data.put("LAT", 32.088674);
+                data.put("TYPES", checkIns);
+
+                wr.write(data.toString());
+                //urlConnection.setRequestProperty("Connection", "keep-alive");
+
+                int status = urlConnection.getResponseCode();
+
+                InputStream in = urlConnection.getInputStream();
+                InputStreamReader isw = new InputStreamReader(in);
+
+                int d = isw.read();
+                char[] buff = new char[1024];
+                //TODO ArrayIndexOutOfBoundsException
+                while (d != -1) {
+                    jsonResults.append(buff, 0, d);
+                    d = isw.read();
+                }
+
+             /*   wr.flush();
+                wr.close();
+*/
+                Log.d("SEARCH_SERVER", jsonResults.toString());
+
+                return jsonResults.toString();
+            } catch (IOException e) {
+                return "Unable to retrieve web page. URL may be invalid.";
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+            return "no results:(";
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            Log.d("SEARCH_RESULTS", result);
         }
     }
 }
