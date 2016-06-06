@@ -55,6 +55,7 @@ public class Utils {
             }
             return null;
         }
+
         public static TimePart getTimePart(Calendar cal){
 
             int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -108,6 +109,22 @@ public class Utils {
             Calendar cal = parseCreatedTimeToCal(date);
 
             return getTimePart(cal);
+        }
+
+        public TimePart getNext(){
+
+            int next = this.ordinal() + 1;
+            if (next > 11) next = 0;
+
+            return Utils.TimePart.fromInt(next);
+        }
+
+        public TimePart getPrevious(){
+            int previous = this.ordinal() - 1;
+            if (previous < 0) previous = 11;
+
+            return Utils.TimePart.fromInt(previous);
+
         }
 
     }
