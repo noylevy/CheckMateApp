@@ -9,42 +9,64 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.noy.finalprojectdesign.SearchActivity"
+    android:layout_centerHorizontal="true"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:textSize="23dp"
+        android:text="בוא נמצא את הצ'קאין הבא שלך!"/>
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="15dp"
         android:text="בחר תאריך לחיפוש"/>
 
     <com.noy.finalprojectdesign.DateEditText
         android:id="@+id/searchDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:textSize="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="15dp"
         android:text="בחר שעה לחיפוש"/>
 
     <com.noy.finalprojectdesign.TimeEditText
         android:id="@+id/searchTime"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
         android:layout_height="wrap_content" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="15dp"
         android:text="בחר מיקום"/>
 
     <EditText
         android:id="@+id/searchLocation"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:layout_marginBottom="15dp"
         android:text="מיקום נוכחי"/>
 
     <Button
         android:id="@+id/searchBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:textSize="20dp"
         android:text="חפש"/>
 </LinearLayout>
