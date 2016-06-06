@@ -1,8 +1,10 @@
 package com.noy.finalprojectdesign.Model;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInstaller;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -215,6 +217,7 @@ public class Model {
             Bundle parameters = new Bundle();
             parameters.putString("fields", "created_time.order(reverse_chronological)," +
                     "place{name,category_list,location}");
+
             GraphRequest gr = new GraphRequest(
                     AccessToken.getCurrentAccessToken(),
                     "me/tagged_places",
@@ -236,6 +239,12 @@ public class Model {
                                 }
 
                                 setLastSyncTime(Utils.getCurrentTimestamp());
+
+                                GraphRequest nextRequest = response.getRequestForPagedResults(GraphResponse.PagingDirection.NEXT);
+                                if(nextRequest != null){
+                                    nextRequest.setCallback(this);
+                                    nextRequest.executeAsync();
+                                }
 
                             } catch (Exception e) {
                                 e.printStackTrace();

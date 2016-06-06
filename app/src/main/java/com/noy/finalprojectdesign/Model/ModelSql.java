@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Anna on 05-Mar-16.
  */
 public class ModelSql {
-    final static int VERSION  = 1;
+    final static int VERSION  = 2;
     final static String DATABASE = "database.db";
     private Helper dbHelper;
 

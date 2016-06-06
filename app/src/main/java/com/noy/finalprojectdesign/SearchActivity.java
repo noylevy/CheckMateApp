@@ -58,7 +58,6 @@ public class SearchActivity extends Activity {
         det = (DateEditText) findViewById(R.id.searchDate);
         searchBtn = (Button) findViewById(R.id.searchBtn);
 
-
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
