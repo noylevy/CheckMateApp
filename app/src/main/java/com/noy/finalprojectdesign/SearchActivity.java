@@ -18,6 +18,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.noy.finalprojectdesign.Model.Checkin;
 import com.noy.finalprojectdesign.Model.Model;
+import com.noy.finalprojectdesign.Receivers.AlarmReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +52,8 @@ public class SearchActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AlarmReceiver.getInstance().init(getApplicationContext());
+
         setContentView(R.layout.activity_search);
 
         location = (EditText) findViewById(R.id.searchLocation);

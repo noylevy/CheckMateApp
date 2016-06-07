@@ -5,8 +5,12 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.noy.finalprojectdesign.Model.Model;
+
+import java.sql.Time;
+import java.util.Calendar;
 
 
 /**
@@ -18,6 +22,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private static final AlarmReceiver instance = new AlarmReceiver();
     private static Context context;
+    private AlarmManager alarm;
+
 
     /*
         This class can't have a private constructor but it has static instance
@@ -46,9 +52,9 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void setAlarm() {
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent receivedIntent =
-                PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarms = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarms.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, 0,
+                PendingIntent.getBroadcast(context, 0 , intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarm.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, 0,
                 AlarmManager.INTERVAL_DAY, receivedIntent);
     }
 
