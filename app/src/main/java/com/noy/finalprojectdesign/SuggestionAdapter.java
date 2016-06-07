@@ -26,6 +26,19 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
             super(v);
             name = (TextView) v.findViewById(R.id.placeName);
             details = (TextView) v.findViewById(R.id.placeDetails);
+
+            name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int id = 0;
+                    int index = suggestionsList.likeList.indexOf(id);
+                    if (index >= 0) {
+                        suggestionsList.likeList.remove(index);
+                    } else {
+                        suggestionsList.likeList.add(id);
+                    }
+                }
+            });
         }
     }
 
