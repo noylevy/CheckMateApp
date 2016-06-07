@@ -26,6 +26,8 @@ public class SuggestionTouchHelper extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         //Remove item
+        int id = 0;
+        suggestionsList.unlikeList.add(id);
         mSuggestionAdapter.remove(viewHolder.getAdapterPosition());
     }
 }
