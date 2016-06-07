@@ -4,11 +4,20 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <receiver
+        android:name=".BootReceiver"
+        android:enabled="true" >
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+        </intent-filter>
+    </receiver>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/check_mate"
@@ -32,6 +41,9 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
+        <receiver android:name=".Receivers.AlarmReceiver"></receiver>
+        <receiver android:name=".Receivers.BootReceiver"></receiver>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
