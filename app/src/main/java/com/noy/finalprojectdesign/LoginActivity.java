@@ -59,10 +59,10 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getHash();
-        Model.getInstance().init(this.getApplicationContext());
-
-        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        FacebookSdk.sdkInitialize(this);
+        Model.getInstance().init(this);
         setContentView(R.layout.activity_login);
+//        Model.getInstance().setLastSyncTime(null);
 
         if(AccessToken.getCurrentAccessToken() != null) {
             updateWithToken(AccessToken.getCurrentAccessToken());
