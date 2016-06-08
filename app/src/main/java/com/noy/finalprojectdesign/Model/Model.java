@@ -231,10 +231,10 @@ public class Model {
                                 Calendar lastSyncCal = Utils.parseTimestampToCal(getLastSyncTime());
 
                                 boolean newCheckins = true;
-
+                                //TODO: check if new with the paging......
                                 for (int i = 0; i < checkInsJson.length() && newCheckins; i++) {
                                     JSONObject obj = checkInsJson.getJSONObject(i);
-                                    Log.d(TAG, "getCheckinsFromFacebook" + obj.get("created_time"));
+//                                    Log.d(TAG, "getCheckinsFromFacebook " + obj.get("created_time"));
                                     newCheckins = proccessCheckIn(obj, lastSyncCal);
                                 }
 
