@@ -8,6 +8,10 @@ import android.widget.TextView;
 
 import com.noy.finalprojectdesign.Model.Place;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,10 +46,41 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
         }
     }
 
-    public SuggestionAdapter(){
-        lPlaces.add(new Place(1, "קפה גידי","קפה שכונתי", "דרך בן גוריון 108, רמת גן", ""));
-        lPlaces.add(new Place(2, "קפה זליק","ממש טוב", "איפשהו בגבעתיים", ""));
-        lPlaces.add(new Place(3, "מקס ברנר","שוקולדד", "הרבה סניפים", ""));
+    public SuggestionAdapter(JSONArray places){
+        JSONObject jPlace;
+        JSONArray openHoursTextJson;
+        String[] openHoursText;
+        Place place;
+        for (int i = 0; i < places.length(); i++){
+            try {
+                jPlace = (JSONObject) places.get(i);
+                String placeId = jPlace.getString("placeId");
+                String name = jPlace.getString("name");
+                String address = jPlace.getString("address");
+                String phoneNumber = jPlace.getString("phoneNumber");
+                openHoursTextJson = jPlace.getJSONArray("openHoursText");
+                int length = openHoursTextJson.length();
+                openHoursText = new String[length];
+                if (length > 0) {
+                    for (int j = 0; j < length; j++) {
+                        openHoursText[j] = openHoursTextJson.getString(j);
+                    }
+                }
+
+                JSONObject jo = jPlace.getJSONObject("chosenType");
+                String chosenType = jo.getString("name");
+                int chosenTypeId = jo.getInt("id");
+                String photo = jPlace.getString("photo");
+                place = new Place(placeId, name, address,
+                            phoneNumber,  openHoursText,
+                            chosenTypeId,  chosenType,  photo);
+
+                this.lPlaces.add(place);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     @Override
@@ -59,7 +94,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         Place place = lPlaces.get(position);
         holder.name.setText(place.getName());
-        holder.details.setText(place.getDetails());
+        holder.details.setText(place.getChosenType());
     }
 
     @Override
