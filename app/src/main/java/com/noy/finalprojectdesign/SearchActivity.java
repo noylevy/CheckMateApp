@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -43,6 +44,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 public class SearchActivity extends Activity {
@@ -70,13 +72,13 @@ public class SearchActivity extends Activity {
         tet = (TimeEditText) findViewById(R.id.searchTime);
         det = (DateEditText) findViewById(R.id.searchDate);
         searchBtn = (Button) findViewById(R.id.searchBtn);
-        Model.getInstance().getAllLocalCheckinsAsync(new Model.GetCheckinsListener() {
+       /* Model.getInstance().getAllLocalCheckinsAsync(new Model.GetCheckinsListener() {
             @Override
             public void onResult(List<Checkin> checkins) {
                 int i = 0;
             }
         });
-
+*/
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,13 +112,20 @@ public class SearchActivity extends Activity {
                         getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
-                    new GetDataFromServer(calendar, locLat).execute();
-                } else {
-                    Log.d("SEARCH_SERVER", "no connection");
-                }
+                    try {
+                        String data = new GetDataFromServer(calendar, locLat).execute().get();
+                        Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
+                        intent.putExtra("suggestions", data);
+                        startActivity(intent);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
 
-                Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
-                startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "There is no internet connection", Toast.LENGTH_LONG);
+                }
             }
         });
     }
@@ -178,8 +187,7 @@ public class SearchActivity extends Activity {
                 int i = urlConnection.getResponseCode();
                 InputStream in;
 
-
-                    if (urlConnection.getResponseCode() >= 400) {
+                if (urlConnection.getResponseCode() >= 400) {
                     in = urlConnection.getErrorStream();
                 } else {
                     in = urlConnection.getInputStream();
