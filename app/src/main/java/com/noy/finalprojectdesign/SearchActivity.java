@@ -171,7 +171,7 @@ public class SearchActivity extends Activity {
                 data.put("LAT", latLng.latitude);
                 data.put("TYPES", prepareDataToServer(cal));
 
-                url = new URL("http://localhost:9000/Recommandations/");
+                url = new URL("http://localhost:9000/Recommandations");
                 urlConnection = (HttpURLConnection)url.openConnection();
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json");
