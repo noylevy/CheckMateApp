@@ -56,8 +56,19 @@ public class suggestionsList extends Activity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        try {
         // specify an adapter (see also next example)
-        mAdapter = new SuggestionAdapter();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String suggestions = extras.getString("suggestions");
+            JSONArray suggestionsArray = new JSONArray(suggestions);
+            mAdapter = new SuggestionAdapter(suggestionsArray);
+        }
+        } catch (JSONException e) {
+            //TODO: add "no data found....."
+            e.printStackTrace();
+        }
+
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(mAdapter);
 
