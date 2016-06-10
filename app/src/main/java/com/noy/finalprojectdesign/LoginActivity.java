@@ -59,10 +59,10 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getHash();
-        Model.getInstance().init(this.getApplicationContext());
-
-        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        FacebookSdk.sdkInitialize(this);
+        Model.getInstance().init(this);
         setContentView(R.layout.activity_login);
+//        Model.getInstance().setLastSyncTime(null);
 
         if(AccessToken.getCurrentAccessToken() != null) {
             updateWithToken(AccessToken.getCurrentAccessToken());
@@ -71,14 +71,11 @@ public class LoginActivity extends Activity {
 
             callbackManager = CallbackManager.Factory.create();
 
-            Model.getInstance().setLastSyncTime(null);
-
             loginButton = (LoginButton) findViewById(R.id.login_button);
             loginButton.setReadPermissions(Arrays.asList(TAGGED_PLACES_PERMISSION));
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    AlarmReceiver.getInstance().init(getApplicationContext());
                 }
 
                 @Override

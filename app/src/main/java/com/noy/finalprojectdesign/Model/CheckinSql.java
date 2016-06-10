@@ -65,28 +65,55 @@ public class CheckinSql {
         List<Integer> timeID = new ArrayList<Integer>();
         timeID.add(time_id);
         List<Checkin> checkins = getCheckinByTypeAndTime(dbHelper, type_id, timeID);
-        return (checkins == null ? null : checkins.get(0));
+        return (checkins.isEmpty()  ? null : checkins.get(0));
+    }
+
+    private static String makePlaceholders(int len) {
+        if (len < 1) {
+            // It will lead to an invalid query anyway ..
+            throw new RuntimeException("No placeholders");
+        } else {
+            StringBuilder sb = new StringBuilder(len * 2 - 1);
+            sb.append("?");
+            for (int i = 1; i < len; i++) {
+                sb.append(",?");
+            }
+            return sb.toString();
+        }
     }
 
     public static List<Checkin> getCheckinByTypeAndTime(ModelSql.Helper dbHelper, String type_id, List<Integer> time_id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(CHECKIN_TABLE, null, CHECKIN_TYPE + "= ? AND " + CHECKIN_TIME + " in (?)", new String[]{type_id, android.text.TextUtils.join(",", time_id)}, null, null, null);
-        List<Checkin> checkins = null;
+        String[] s= new String[time_id.size() + 1];
+        s[0] = type_id;
+        for (int i = 0; i < time_id.size(); i++){
+            s[i+1] = Integer.toString(time_id.get(i));
+        }
+        Cursor cursor = db.query(CHECKIN_TABLE, null, CHECKIN_TYPE + "= ? AND " +
+                        CHECKIN_TIME + " in (" + makePlaceholders(time_id.size()) + ")",
+                s, null, null, null);
+        List<Checkin> checkins = new ArrayList<Checkin>();
+
+
+        //Cursor cursor = db.query(CHECKIN_TABLE, null, CHECKIN_TYPE + "= ? AND " + CHECKIN_TIME + " in (?)", new String[]{type_id, android.text.TextUtils.join(",", time_id)}, null, null, null);
 
         String type;
         Utils.TimePart time;
         int count;
 
-        while (cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             int type_index = cursor.getColumnIndex(CHECKIN_TYPE);
             int time_index = cursor.getColumnIndex(CHECKIN_TIME);
             int count_index = cursor.getColumnIndex(CHECKIN_COUNT);
 
-            type = cursor.getString(type_index);
-            time = Utils.TimePart.fromInt(cursor.getInt(time_index));
-            count = cursor.getInt(count_index);
+            do {
+                type = cursor.getString(type_index);
+                time = Utils.TimePart.fromInt(cursor.getInt(time_index));
+                count = cursor.getInt(count_index);
 
-            checkins.add(new Checkin(type, time, count));
+                Checkin c = new Checkin(type, time, count);
+                checkins.add(c);;
+            } while (cursor.moveToNext());
         }
 
         return checkins;
@@ -94,29 +121,38 @@ public class CheckinSql {
 
     public static List<Checkin> getCheckinsByTime(ModelSql.Helper dbHelper, List<Integer> time_id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(CHECKIN_TABLE, null, CHECKIN_TIME + " in (?)", new String[]{android.text.TextUtils.join(",", time_id)}, null, null, null);
-        List<Checkin> checkins = null;
+
+        String[] s= new String[time_id.size()];
+        for (int i = 0; i < time_id.size(); i++){
+            s[i] = Integer.toString(time_id.get(i));
+        }
+        Cursor cursor = db.query(CHECKIN_TABLE, null, CHECKIN_TIME + " in (" + makePlaceholders(time_id.size()) + ")"
+                , s , null, null, null);
+        List<Checkin> checkins = new ArrayList<Checkin>();
+//        Cursor cursor = db.query(CHECKIN_TABLE, null, CHECKIN_TIME + " in (?)", new String[]{android.text.TextUtils.join(",", time_id)}, null, null, null);
 
         String type;
         Utils.TimePart time;
         int count;
 
-        while (cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             int type_index = cursor.getColumnIndex(CHECKIN_TYPE);
             int time_index = cursor.getColumnIndex(CHECKIN_TIME);
             int count_index = cursor.getColumnIndex(CHECKIN_COUNT);
 
-            type = cursor.getString(type_index);
-            time = Utils.TimePart.fromInt(cursor.getInt(time_index));
-            count = cursor.getInt(count_index);
+            do {
+                type = cursor.getString(type_index);
+                time = Utils.TimePart.fromInt(cursor.getInt(time_index));
+                count = cursor.getInt(count_index);
 
-            checkins.add(new Checkin(type, time, count));
+                Checkin c = new Checkin(type, time, count);
+                checkins.add(c);;
+            } while (cursor.moveToNext());
         }
+
 
         return checkins;
     }
-
-
 
 
     public static List<Checkin> getAllCheckins(ModelSql.Helper dbHelper) {

@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -27,11 +28,18 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.noy.finalprojectdesign.Model.Checkin;
 import com.noy.finalprojectdesign.Model.Model;
+import com.noy.finalprojectdesign.Receivers.AlarmReceiver;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,6 +52,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 public class SearchActivity extends Activity {
@@ -63,6 +72,11 @@ public class SearchActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FacebookSdk.sdkInitialize(this);
+        Model.getInstance().init(this);
+        AlarmReceiver.getInstance().init(getApplicationContext());
+
         setContentView(R.layout.activity_search);
 
         location = (EditText) findViewById(R.id.searchLocation);
@@ -107,6 +121,13 @@ public class SearchActivity extends Activity {
 //            }
 //        });
 
+       /* Model.getInstance().getAllLocalCheckinsAsync(new Model.GetCheckinsListener() {
+            @Override
+            public void onResult(List<Checkin> checkins) {
+                int i = 0;
+            }
+        });
+*/
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,9 +163,19 @@ public class SearchActivity extends Activity {
                         getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
-                    new GetDataFromServer(calendar, locLat).execute();
+                    try {
+                        String data = new GetDataFromServer(calendar, locLat).execute().get();
+                        Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
+                        intent.putExtra("suggestions", data);
+                        startActivity(intent);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
                 } else {
-                    Log.d("SEARCH_SERVER", "no connection");
+                    Toast.makeText(getApplicationContext(), "There is no internet connection", Toast.LENGTH_LONG);
                 }
 
                 progressBar.setVisibility(View.GONE);
@@ -170,8 +201,8 @@ public class SearchActivity extends Activity {
 
     private class GetDataFromServer extends AsyncTask<String, Void, String> {
 
-        protected Calendar cal;
-        protected LatLng latLng;
+        protected  Calendar cal;
+        protected  LatLng  latLng;
 
         public GetDataFromServer(Calendar cal, LatLng latLng) {
             this.cal = cal;
@@ -196,38 +227,37 @@ public class SearchActivity extends Activity {
                 data.put("LAT", latLng.latitude);
                 data.put("TYPES", prepareDataToServer(cal));
 
-                //url = new URL("http://localhost:8181/CheckMateServer/recommendation");
-                //url = new URL("http://localhost:9000/Recommandations/1/123456/34.819934/32.088674/''");
-                url = new URL("http://localhost:9000/Recommandations/1/123456/34.819934/32.088674");
-                //TODO can open connection - toast and return to search.
-                urlConnection = (HttpURLConnection) url.openConnection();
+                url = new URL("http://localhost:9000/Recommandations");
+                urlConnection = (HttpURLConnection)url.openConnection();
                 urlConnection.setRequestMethod("POST");
-                urlConnection.setDoOutput(true);
-
-                urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                urlConnection.setRequestProperty("Content-Type", "application/json");
+                urlConnection.setRequestProperty("Charset", "UTF-8");
+                urlConnection.setRequestProperty("Accept-Charset", "UTF-8");
                 OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+                String ds = data.toString();
+                wr.write(ds);
 
+                wr.flush();
+                wr.close();
 
-                /*JSONArray checkIns = new JSONArray();
-                JSONObject checkIn = new JSONObject();
-                checkIn.put("type", "cafe");
-                checkIn.put("count", 7);
-                checkIns.put(checkIn);*/
+                int i = urlConnection.getResponseCode();
+                InputStream in;
 
-//                JSONObject data = new JSONObject();
-//                data.put("USER_ID", 1);
-//                data.put("TIME", cal.getTimeInMillis());
-//                data.put("LNG", latLng.longitude);
-//                data.put("LAT", latLng.latitude);
-//                data.put("TYPES", prepareDataToServer(cal));
+                if (urlConnection.getResponseCode() >= 400) {
+                    in = urlConnection.getErrorStream();
+                } else {
+                    in = urlConnection.getInputStream();
+                }
 
-                wr.write(data.toString());
-                //urlConnection.setRequestProperty("Connection", "keep-alive");
+                BufferedReader input = new BufferedReader(
+                        new InputStreamReader(in, "UTF-8"));
+                String str;
+                while (null != (str = input.readLine())) {
+                    jsonResults.append(str).append("\r\n");
+                }
+                input.close();
 
-                int status = urlConnection.getResponseCode();
-
-                InputStream in = urlConnection.getInputStream();
-                InputStreamReader isw = new InputStreamReader(in);
+                /*InputStreamReader isw = new InputStreamReader(in);
 
                 int d = isw.read();
                 char[] buff = new char[1024];
@@ -235,11 +265,8 @@ public class SearchActivity extends Activity {
                 while (d != -1) {
                     jsonResults.append(buff, 0, d);
                     d = isw.read();
-                }
+                }*/
 
-             /*   wr.flush();
-                wr.close();
-*/
                 Log.d("SEARCH_SERVER", jsonResults.toString());
 
                 return jsonResults.toString();

@@ -214,6 +214,10 @@ public class Model {
     public void getCheckinsFromFacebook() {
         if(AccessToken.getCurrentAccessToken() != null) {
             //"me/tagged_places?fields=created_time,place{name,category_list,location}"
+
+            final String lastSync = getLastSyncTime();
+            setLastSyncTime(Utils.getCurrentTimestamp());
+
             Bundle parameters = new Bundle();
             parameters.putString("fields", "created_time.order(reverse_chronological)," +
                     "place{name,category_list,location}");
@@ -228,22 +232,22 @@ public class Model {
                             try {
                                 JSONObject data = response.getJSONObject();
                                 JSONArray checkInsJson = data.getJSONArray("data");
-                                Calendar lastSyncCal = Utils.parseTimestampToCal(getLastSyncTime());
+                                Calendar lastSyncCal = Utils.parseTimestampToCal(lastSync);
 
                                 boolean newCheckins = true;
-
+                                //TODO: check if new with the paging......
                                 for (int i = 0; i < checkInsJson.length() && newCheckins; i++) {
                                     JSONObject obj = checkInsJson.getJSONObject(i);
-                                    Log.d(TAG, "getCheckinsFromFacebook" + obj.get("created_time"));
+//                                    Log.d(TAG, "getCheckinsFromFacebook " + obj.get("created_time"));
                                     newCheckins = proccessCheckIn(obj, lastSyncCal);
                                 }
 
-                                setLastSyncTime(Utils.getCurrentTimestamp());
-
-                                GraphRequest nextRequest = response.getRequestForPagedResults(GraphResponse.PagingDirection.NEXT);
-                                if(nextRequest != null){
-                                    nextRequest.setCallback(this);
-                                    nextRequest.executeAsync();
+                                if(newCheckins) {
+                                    GraphRequest nextRequest = response.getRequestForPagedResults(GraphResponse.PagingDirection.NEXT);
+                                    if (nextRequest != null) {
+                                        nextRequest.setCallback(this);
+                                        nextRequest.executeAsync();
+                                    }
                                 }
 
                             } catch (Exception e) {

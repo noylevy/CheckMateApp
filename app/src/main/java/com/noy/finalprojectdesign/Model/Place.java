@@ -4,18 +4,27 @@ package com.noy.finalprojectdesign.Model;
  * Created by noy on 21/05/2016.
  */
 public class Place {
-    private int id;
+    private String placeId;
     private String name;
-    private String details;
     private String address;
-    private String pic;
+    private String phoneNumber;
+    private String[] openHoursText;
+    private int chosenTypeId;
+    private String chosenType;
+    private String photo;
 
-    public Place(int id, String name, String details, String address, String pic) {
-        this.id = id;
+
+    public Place(String placeId, String name, String address,
+                 String phoneNumber, String[] openHoursText,
+                 int chosenTypeId, String chosenType, String photo) {
+        this.placeId = placeId;
         this.name = name;
-        this.details = details;
         this.address = address;
-        this.pic = pic;
+        this.phoneNumber = phoneNumber;
+        this.openHoursText = openHoursText;
+        this.chosenTypeId = chosenTypeId;
+        this.chosenType = chosenType;
+        this.photo = photo;
     }
 
     public String getAddress() {
@@ -26,20 +35,43 @@ public class Place {
         this.address = address;
     }
 
-    public String getDetails() {
-        return details;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setDetails(String details) {
-        this.details = details;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
-    public int getId() {
-        return id;
+    public String[] getOpenHoursText() {
+        return openHoursText;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setOpenHoursText(String[] openHoursText) {
+        this.openHoursText = openHoursText;
+    }
+
+    public int getChosenTypeId() {
+        return chosenTypeId;
+    }
+
+    public void setChosenTypeId(int chosenTypeId) {
+        this.chosenTypeId = chosenTypeId;
+    }
+    public String getChosenType() {
+        return chosenType;
+    }
+
+    public void setChosenType(String chosenType) {
+        this.chosenType = chosenType;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 
     public String getName() {
@@ -50,11 +82,11 @@ public class Place {
         this.name = name;
     }
 
-    public String getPic() {
-        return pic;
+    public String getPhoto() {
+        return photo;
     }
 
-    public void setPic(String pic) {
-        this.pic = pic;
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 }
