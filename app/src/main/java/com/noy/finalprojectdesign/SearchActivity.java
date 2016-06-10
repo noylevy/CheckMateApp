@@ -1,19 +1,28 @@
 package com.noy.finalprojectdesign;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.noy.finalprojectdesign.Model.Checkin;
@@ -41,12 +50,15 @@ public class SearchActivity extends Activity {
 
     static final int PLACE_PICKER_RESULT = 1;
     private final static String RTL_CHAR = "\u200E";
+    private static final int MY_PERMISSION_ACCESS_COURSE_LOCATION = 0;
 
     EditText location;
     static TimeEditText tet;
     DateEditText det;
     LatLng locLat;
     Button searchBtn;
+    ProgressBar progressBar;
+    LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +69,43 @@ public class SearchActivity extends Activity {
         tet = (TimeEditText) findViewById(R.id.searchTime);
         det = (DateEditText) findViewById(R.id.searchDate);
         searchBtn = (Button) findViewById(R.id.searchBtn);
+        progressBar = (ProgressBar) findViewById(R.id.activity_indicator);
+        progressBar.setVisibility(View.GONE);
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        String locationProvider = LocationManager.NETWORK_PROVIDER;
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+//                        int o = 1;
+//                        return;
+            ActivityCompat.requestPermissions(SearchActivity.this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSION_ACCESS_COURSE_LOCATION);
+
+        }
+
+//        location.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if(hasFocus){
+//                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+//
+//                    try {
+//                        startActivityForResult(builder.build(SearchActivity.this), PLACE_PICKER_RESULT);
+//                    } catch (GooglePlayServicesRepairableException e) {
+//                        e.printStackTrace();
+//                    } catch (GooglePlayServicesNotAvailableException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
 
         location.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +131,8 @@ public class SearchActivity extends Activity {
                 String lat = data.findPath("LAT").asText();
                 JsonNode types = data.findPath("TYPES");*/
 
+                progressBar.setVisibility(View.VISIBLE);
+
                 String time[] = SearchActivity.tet.getText().toString().split(":");
                 String date[] = det.getText().toString().split("/");
                 Calendar calendar = Calendar.getInstance();
@@ -96,6 +147,7 @@ public class SearchActivity extends Activity {
                     Log.d("SEARCH_SERVER", "no connection");
                 }
 
+                progressBar.setVisibility(View.GONE);
                 Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
                 startActivity(intent);
             }
@@ -118,10 +170,10 @@ public class SearchActivity extends Activity {
 
     private class GetDataFromServer extends AsyncTask<String, Void, String> {
 
-        protected  Calendar cal;
-        protected  LatLng latLng;
+        protected Calendar cal;
+        protected LatLng latLng;
 
-        public GetDataFromServer(Calendar cal, LatLng latLng){
+        public GetDataFromServer(Calendar cal, LatLng latLng) {
             this.cal = cal;
             this.latLng = latLng;
         }
@@ -205,16 +257,15 @@ public class SearchActivity extends Activity {
         }
 
 
-
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
             Log.d("SEARCH_RESULTS", result);
         }
 
-        public JSONArray prepareDataToServer(Calendar cal){
+        public JSONArray prepareDataToServer(Calendar cal) {
 
-            Utils.TimePart currentTimePart =  Utils.TimePart.getTimePart(cal);
+            Utils.TimePart currentTimePart = Utils.TimePart.getTimePart(cal);
             Utils.TimePart nextTimePart = currentTimePart.getNext();
             Utils.TimePart prevTimePart = currentTimePart.getPrevious();
 
@@ -250,6 +301,46 @@ public class SearchActivity extends Activity {
             }
 
             return jarray;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case MY_PERMISSION_ACCESS_COURSE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    String locationProvider = LocationManager.NETWORK_PROVIDER;
+
+                    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for Activity#requestPermissions for more details.
+                        return;
+                    }
+                    Location lastlocation = locationManager.getLastKnownLocation(locationProvider);
+                    locLat = new LatLng(lastlocation.getLatitude(), lastlocation.getLongitude());
+
+
+                } else {
+                    //TODO talk about it
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
     }
 }

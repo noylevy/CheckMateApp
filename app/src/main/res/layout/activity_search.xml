@@ -60,6 +60,8 @@
         android:textSize="20dp"
         android:gravity="center"
         android:layout_marginBottom="15dp"
+        android:editable="false"
+        android:focusableInTouchMode="false"
         android:text="מיקום נוכחי"/>
 
     <Button
@@ -69,4 +71,14 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:textSize="20dp"
         android:text="חפש"/>
+
+
+    <ProgressBar
+        android:id="@+id/activity_indicator"
+        android:indeterminate="true"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="visible" />
 </LinearLayout>
