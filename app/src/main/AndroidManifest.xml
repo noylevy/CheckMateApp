@@ -21,7 +21,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/check_mate"
+        android:icon="@mipmap/checkmate"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
