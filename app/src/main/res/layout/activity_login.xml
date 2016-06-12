@@ -26,6 +26,8 @@
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:text="enter CheckMate"
+        android:background="@color/material_deep_teal_500"
+        android:textStyle="bold"
         android:layout_alignBottom="@+id/imageView"
         android:layout_centerHorizontal="true" />
 
