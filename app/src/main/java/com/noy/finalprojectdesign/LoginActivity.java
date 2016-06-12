@@ -8,6 +8,8 @@ import android.content.pm.Signature;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -30,6 +32,8 @@ public class LoginActivity extends Activity {
     private LoginButton loginButton;
     private AccessTokenTracker accessTokenTracker;
     private CallbackManager callbackManager;
+    Button enterBtn;
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -62,13 +66,24 @@ public class LoginActivity extends Activity {
         FacebookSdk.sdkInitialize(this);
         Model.getInstance().init(this);
         setContentView(R.layout.activity_login);
+
+        enterBtn = (Button) findViewById(R.id.enter_button);
+
 //        Model.getInstance().setLastSyncTime(null);
 
         if(AccessToken.getCurrentAccessToken() != null) {
+            enterBtn.setVisibility(View.VISIBLE);
+            enterBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                    startActivity(intent);
+                }
+            });
             updateWithToken(AccessToken.getCurrentAccessToken());
         }
         else{
-
+            enterBtn.setVisibility(View.GONE);
             callbackManager = CallbackManager.Factory.create();
 
             loginButton = (LoginButton) findViewById(R.id.login_button);
