@@ -137,10 +137,13 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
                 String phoneNumber = jPlace.getString("phoneNumber");
                 openHoursTextJson = jPlace.getJSONArray("openHoursText");
                 int length = openHoursTextJson.length();
-                openHoursText = new String[length];
+                openHoursText = new String[length * 2];
                 if (length > 0) {
-                    for (int j = 0; j < length; j++) {
-                        openHoursText[j] = openHoursTextJson.getString(j);
+                    String fullHourText ;
+                    for (int j = 0; j < length; j+=2) {
+                        fullHourText = openHoursTextJson.getString(j);
+                        openHoursText[j] = fullHourText.split(":")[0] + ":";
+                        openHoursText[j + 1] =fullHourText.split(":")[1];
                     }
                 }
 

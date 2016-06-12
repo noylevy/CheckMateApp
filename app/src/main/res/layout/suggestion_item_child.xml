@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/placeDetailsLinear"
-    android:visibility="gone"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
@@ -12,12 +11,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="left"
-        android:gravity="left">
+        android:layout_gravity="right"
+        android:gravity="right">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/hours"/>
             <TextView
                 android:id="@+id/placeTypeName"
                 android:layout_width="wrap_content"
@@ -25,11 +29,7 @@
                 android:textSize="15dp"
                 android:textStyle="bold"
                 android:text="Type" />
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/hours"/>
+
         </LinearLayout>
         <ListView
             android:id="@+id/placeHours"
@@ -46,8 +46,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="right"
-        android:gravity="right">
+        android:layout_gravity="left"
+        android:gravity="left">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:src="@drawable/map"/>
         </LinearLayout>
 
@@ -74,13 +74,12 @@
                 android:id="@+id/placePhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:textSize="15dp"
                 android:text="phone" />
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:src="@drawable/phone"/>
         </LinearLayout>
 
