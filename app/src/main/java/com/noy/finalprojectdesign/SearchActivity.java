@@ -179,8 +179,8 @@ public class SearchActivity extends Activity {
                 }
 
                 progressBar.setVisibility(View.GONE);
-                Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
-                startActivity(intent);
+/*                Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
+                startActivity(intent);*/
             }
         });
     }
@@ -217,7 +217,7 @@ public class SearchActivity extends Activity {
             URL url;
             HttpURLConnection urlConnection = null;
             StringBuilder jsonResults = new StringBuilder();
-
+            String result = "no results:(";
             try {
 
                 JSONObject data = new JSONObject();
@@ -227,7 +227,7 @@ public class SearchActivity extends Activity {
                 data.put("LAT", latLng.latitude);
                 data.put("TYPES", prepareDataToServer(cal));
 
-                url = new URL("http://localhost:9000/Recommandations");
+                url = new URL("http://checkmatep-sikole.rhcloud.com/Recommandations");
                 urlConnection = (HttpURLConnection)url.openConnection();
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -269,7 +269,7 @@ public class SearchActivity extends Activity {
 
                 Log.d("SEARCH_SERVER", jsonResults.toString());
 
-                return jsonResults.toString();
+                result = jsonResults.toString();
             } catch (IOException e) {
                 return "Unable to retrieve web page. URL may be invalid.";
             } catch (Exception e) {
@@ -280,7 +280,7 @@ public class SearchActivity extends Activity {
                 }
             }
 
-            return "no results:(";
+            return result;
         }
 
 
