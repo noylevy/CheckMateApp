@@ -2,7 +2,10 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
-
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -10,16 +13,25 @@
         android:paddingBottom="10dp"
         android:paddingTop="10dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_input_add"/>
-
+        <ToggleButton
+            android:id="@+id/placeLike"
+            android:layout_width="40dp"
+            android:layout_height="35dp"
+            android:checked="false"
+            android:textOff=""
+            android:textOn=""
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/like_selector" />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
+            <TextView
+                android:id="@+id/placeId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
             <TextView
                 android:id="@+id/placeName"
                 android:layout_width="220dp"
@@ -31,20 +43,20 @@
                 android:paddingBottom="5dp"
                 android:layout_marginStart="20dp"
                 />
-            <TextView
-                android:id="@+id/placeDetails"
-                android:layout_width="220dp"
-                android:layout_height="wrap_content"
-                android:text="Details..."
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="20dp" />
         </LinearLayout>
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:src="@android:drawable/ic_dialog_info"/>
+            android:id="@+id/placeImage"
+            android:layout_width="80dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/place"/>
+
     </LinearLayout>
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/suggestion_item_child" />
+</LinearLayout>
 </FrameLayout>
