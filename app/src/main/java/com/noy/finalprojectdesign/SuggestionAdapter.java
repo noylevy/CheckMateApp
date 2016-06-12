@@ -117,6 +117,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
     }
 
     public SuggestionAdapter(JSONArray places){
+/*
 
         lPlaces.add(new Place("1", "קפה גידי","דרך בן גוריון 108, רמת גן", "0525888888",
                 new String[]{"M: 8:00 – 6:00","T: 8:00 – 6:00",
@@ -126,6 +127,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
         lPlaces.add(new Place("2", "קפה זליק","איפשהו בגבעתיים", "03 - 58962148", null,1,"",""));
         lPlaces.add(new Place("3", "מקס ברנר","הרבה סניפים", "111", null,1,"",""));
 
+*/
 
         JSONObject jPlace;
         JSONArray openHoursTextJson;
