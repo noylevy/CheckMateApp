@@ -43,11 +43,21 @@ public class Place {
         this.phoneNumber = phoneNumber;
     }
 
-    public String[] getOpenHoursText() {
+    public String[] getOpenHours() {
         return openHoursText;
     }
 
-    public void setOpenHoursText(String[] openHoursText) {
+    public String getOpenHoursText() {
+        String text = "";
+        if (openHoursText != null) {
+            for (int i=0;i<openHoursText.length;i++) {
+                text = openHoursText[i] + "\n";
+            }
+        }
+        return text;
+    }
+
+    public void setOpenHours(String[] openHoursText) {
         this.openHoursText = openHoursText;
     }
 

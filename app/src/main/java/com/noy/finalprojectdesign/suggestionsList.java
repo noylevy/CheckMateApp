@@ -2,6 +2,7 @@ package com.noy.finalprojectdesign;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -11,6 +12,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.noy.finalprojectdesign.Model.Checkin;
@@ -39,15 +42,14 @@ public class suggestionsList extends Activity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    public static List<Integer> unlikeList;
-    public static List<Integer> likeList;
+    public static List<String> unlikeList;
+    public static List<String> likeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestions_list);
         mRecyclerView = (RecyclerView) findViewById(R.id.suggstionsList);
-
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
@@ -57,13 +59,13 @@ public class suggestionsList extends Activity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         try {
-        // specify an adapter (see also next example)
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String suggestions = extras.getString("suggestions");
-            JSONArray suggestionsArray = new JSONArray(suggestions);
-            mAdapter = new SuggestionAdapter(suggestionsArray);
-        }
+            // specify an adapter (see also next example)
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                String suggestions = extras.getString("suggestions");
+                JSONArray suggestionsArray = new JSONArray(suggestions);
+                mAdapter = new SuggestionAdapter(suggestionsArray);
+            }
         } catch (JSONException e) {
             //TODO: add "no data found....."
             e.printStackTrace();
@@ -76,8 +78,8 @@ public class suggestionsList extends Activity {
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(mRecyclerView);
 
-        unlikeList = new LinkedList<Integer>();
-        likeList = new LinkedList<Integer>();
+        unlikeList = new LinkedList<String>();
+        likeList = new LinkedList<String>();
     }
 
     @Override
@@ -92,15 +94,15 @@ public class suggestionsList extends Activity {
         } else {
             Log.d("SEARCH_SERVER", "no connection");
         }
-
     }
+
 
     private class SendActionsToServer extends AsyncTask<String, Void, String> {
 
-        protected List<Integer> unlikeList;
-        protected List<Integer> likeList;
+        protected List<String> unlikeList;
+        protected List<String> likeList;
 
-        public SendActionsToServer(List<Integer> unlikeList, List<Integer> likeList){
+        public SendActionsToServer(List<String> unlikeList, List<String> likeList){
             this.unlikeList = unlikeList;
             this.likeList = likeList;
         }
@@ -115,7 +117,7 @@ public class suggestionsList extends Activity {
 
             try {
                 //TODO change url?!
-                url = new URL("http://localhost:9000/Recommandations/1/123456/34.819934/32.088674");
+                url = new URL("http://checkmatep-sikole.rhcloud.com/Emotions");
                 //TODO can open connection - toast and return to search.
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("POST");
@@ -125,14 +127,14 @@ public class suggestionsList extends Activity {
                 OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
 
                 JSONArray userActions = new JSONArray();
-                for (int id: unlikeList) {
+                for (String id: unlikeList) {
                     JSONObject curr = new JSONObject();
                     curr.put("action", -1);
                     curr.put("id", id);
                     userActions.put(curr);
                 }
 
-                for (int id: likeList) {
+                for (String id: likeList) {
                     JSONObject curr = new JSONObject();
                     curr.put("action", 1);
                     curr.put("id", id);
