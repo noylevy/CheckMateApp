@@ -105,7 +105,6 @@ public class suggestionsList extends Activity {
             StringBuilder jsonResults = new StringBuilder();
 
             try {
-                //TODO change url?!
                 url = new URL("http://checkmatep-sikole.rhcloud.com/Emotions");
                 //url = new URL("http://localhost:9000/Emotions");
                 //TODO can open connection - toast and return to search.
