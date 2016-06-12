@@ -142,8 +142,8 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
                     String fullHourText ;
                     for (int j = 0; j < length; j+=2) {
                         fullHourText = openHoursTextJson.getString(j);
-                        openHoursText[j] = fullHourText.split(":")[0] + ":";
-                        openHoursText[j + 1] =fullHourText.split(":")[1];
+                        openHoursText[j] = fullHourText.substring(0, fullHourText.indexOf(":")) + ":";
+                        openHoursText[j + 1] = fullHourText.substring(fullHourText.indexOf(":") + 1);
                     }
                 }
 
