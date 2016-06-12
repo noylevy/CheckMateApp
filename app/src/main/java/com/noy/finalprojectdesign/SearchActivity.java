@@ -101,7 +101,9 @@ public class SearchActivity extends Activity {
 //                        return;
             ActivityCompat.requestPermissions(SearchActivity.this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSION_ACCESS_COURSE_LOCATION);
-
+        } else {
+            Location lastlocation = locationManager.getLastKnownLocation(locationProvider);
+            locLat = new LatLng(lastlocation.getLatitude(), lastlocation.getLongitude());
         }
 
 //        location.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -164,7 +166,7 @@ public class SearchActivity extends Activity {
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
                     try {
-                        String data = new GetDataFromServer(calendar, locLat).execute().get();
+                        String data = new GetDataFromServer(calendar, locLat, progressBar).execute().get();
                         Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
                         intent.putExtra("suggestions", data);
                         startActivity(intent);
@@ -203,10 +205,12 @@ public class SearchActivity extends Activity {
 
         protected  Calendar cal;
         protected  LatLng  latLng;
+        protected  ProgressBar progressBar;
 
-        public GetDataFromServer(Calendar cal, LatLng latLng) {
+        public GetDataFromServer(Calendar cal, LatLng latLng, ProgressBar progressBar) {
             this.cal = cal;
             this.latLng = latLng;
+            this.progressBar = progressBar;
         }
 
         @Override
@@ -243,7 +247,7 @@ public class SearchActivity extends Activity {
                 int i = urlConnection.getResponseCode();
                 InputStream in;
 
-                if (urlConnection.getResponseCode() >= 400) {
+                if (i >= 400) {
                     in = urlConnection.getErrorStream();
                 } else {
                     in = urlConnection.getInputStream();
@@ -283,6 +287,10 @@ public class SearchActivity extends Activity {
             return result;
         }
 
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
         // onPostExecute displays the results of the AsyncTask.
         @Override
@@ -326,6 +334,8 @@ public class SearchActivity extends Activity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            progressBar.setVisibility(View.GONE);
 
             return jarray;
         }
