@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.noy.finalprojectdesign.Model.EmotionsPlace;
 import com.noy.finalprojectdesign.Model.Place;
 
 import org.json.JSONArray;
@@ -44,6 +45,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
         public TextView id,name,address,phone,type;
+        public int chosenGoogleType;
         public ListView hours;
         public ToggleButton like;
         public ImageView image;
@@ -68,10 +70,11 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
                     // Place is liked
+                    EmotionsPlace place = new EmotionsPlace(chosenGoogleType, id.getText().toString());
                     if (isChecked) {
-                        suggestionsList.likeList.add(id.getText().toString());
+                        suggestionsList.likeList.add(place);
                     } else {
-                        suggestionsList.likeList.remove(id.getText().toString());
+                        suggestionsList.likeList.remove(place);
                     }
                 }
             });
@@ -178,6 +181,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
         holder.address.setText(place.getAddress());
         holder.phone.setText(place.getPhoneNumber());
         holder.type.setText(place.getChosenType());
+        holder.chosenGoogleType = place.getChosenTypeId();
 
         String[] hours = new String[]{};
         if (place.getOpenHours() != null) {
