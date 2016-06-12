@@ -84,10 +84,10 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
                 mOriginalHeight = v.getHeight();
             }
             ValueAnimator valueAnimator;
-            int sizeToExpand = (int) (mOriginalHeight * 0.7);
-            if (hours.getAdapter().getCount() > 0) {
+            int sizeToExpand = (int) (mOriginalHeight * 1.22);
+/*            if (hours.getAdapter().getCount() > 0) {
                 sizeToExpand = (int)( mOriginalHeight * (hours.getAdapter().getCount() * 0.22));
-            }
+            }*/
 
             if (!mIsViewExpanded) {
                 mIsViewExpanded = true;
@@ -115,7 +115,6 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
 
     public SuggestionAdapter(JSONArray places){
 
-/*
         lPlaces.add(new Place("1", "קפה גידי","דרך בן גוריון 108, רמת גן", "0525888888",
                 new String[]{"M: 8:00 – 6:00","T: 8:00 – 6:00",
                              "W: 8:00 – 6:00","Th: 8:00 – 6:00",
@@ -123,7 +122,6 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
                 1,"Cafe","CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU"));
         lPlaces.add(new Place("2", "קפה זליק","איפשהו בגבעתיים", "03 - 58962148", null,1,"",""));
         lPlaces.add(new Place("3", "מקס ברנר","הרבה סניפים", "111", null,1,"",""));
-*/
 
 
         JSONObject jPlace;
@@ -224,8 +222,8 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
             if (result == null) {
                 bmImage.setImageResource(R.drawable.place);
             } else {
-                int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, bmImage.getContext().getResources().getDisplayMetrics());
-                int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, bmImage.getContext().getResources().getDisplayMetrics());
+                int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, bmImage.getContext().getResources().getDisplayMetrics());
+                int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, bmImage.getContext().getResources().getDisplayMetrics());
                 bmImage.getLayoutParams().height = height;
                 bmImage.getLayoutParams().width = width;
                 bmImage.setImageBitmap(result);

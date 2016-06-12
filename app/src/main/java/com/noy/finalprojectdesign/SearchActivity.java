@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.facebook.FacebookSdk;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -103,7 +102,12 @@ public class SearchActivity extends Activity {
                     MY_PERMISSION_ACCESS_COURSE_LOCATION);
         } else {
             Location lastlocation = locationManager.getLastKnownLocation(locationProvider);
-            locLat = new LatLng(lastlocation.getLatitude(), lastlocation.getLongitude());
+
+            if (lastlocation != null) {
+                locLat = new LatLng(lastlocation.getLatitude(), lastlocation.getLongitude());
+            } else {
+                locLat = new LatLng(34.819934, 32.088674);
+            }
         }
 
 //        location.setOnFocusChangeListener(new View.OnFocusChangeListener() {
