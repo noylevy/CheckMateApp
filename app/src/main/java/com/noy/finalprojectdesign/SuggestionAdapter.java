@@ -84,10 +84,10 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
                 mOriginalHeight = v.getHeight();
             }
             ValueAnimator valueAnimator;
-            int sizeToExpand = (int) (mOriginalHeight * 1.22);
-/*            if (hours.getAdapter().getCount() > 0) {
-                sizeToExpand = (int)( mOriginalHeight * (hours.getAdapter().getCount() * 0.22));
-            }*/
+            int sizeToExpand = (int) (mOriginalHeight * 1);
+            if (hours.getAdapter().getCount() > 0) {
+                sizeToExpand = (int)( mOriginalHeight * (hours.getAdapter().getCount() * 0.23));
+            }
 
             if (!mIsViewExpanded) {
                 mIsViewExpanded = true;
@@ -137,13 +137,27 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
                 String phoneNumber = jPlace.getString("phoneNumber");
                 openHoursTextJson = jPlace.getJSONArray("openHoursText");
                 int length = openHoursTextJson.length();
-                openHoursText = new String[length * 2];
+                openHoursText = new String[length];
                 if (length > 0) {
                     String fullHourText ;
-                    for (int j = 0; j < length; j+=2) {
+                    for (int j = 0; j < length; j++) {
                         fullHourText = openHoursTextJson.getString(j);
-                        openHoursText[j] = fullHourText.substring(0, fullHourText.indexOf(":")) + ":";
-                        openHoursText[j + 1] = fullHourText.substring(fullHourText.indexOf(":") + 1);
+                        if (fullHourText.contains("יום ראשון")) {
+                            fullHourText = fullHourText.replace("יום ראשון","א");
+                        } else if (fullHourText.contains("יום שני")) {
+                            fullHourText = fullHourText.replace("יום שני", "ב");
+                        } else if (fullHourText.contains("יום שלישי")) {
+                            fullHourText = fullHourText.replace("יום שלישי", "ג");
+                        } else if (fullHourText.contains("יום רביעי")) {
+                            fullHourText = fullHourText.replace("יום רביעי", "ד");
+                        } else if (fullHourText.contains("יום חמישי")) {
+                            fullHourText = fullHourText.replace("יום חמישי", "ה");
+                        } else if (fullHourText.contains("יום שישי")) {
+                            fullHourText = fullHourText.replace("יום שישי", "ו");
+                        } else if (fullHourText.contains("יום שבת")) {
+                            fullHourText = fullHourText.replace("יום שבת", "ש");
+                        }
+                        openHoursText[j] = fullHourText;
                     }
                 }
 

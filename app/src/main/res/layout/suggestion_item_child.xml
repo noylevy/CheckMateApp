@@ -3,9 +3,9 @@
     android:id="@+id/placeDetailsLinear"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="gone"
     android:orientation="horizontal"
     android:layout_marginTop="5dp"
+    android:visibility="gone"
     android:paddingBottom="10dp"
     android:layout_marginLeft="10dp">
     <LinearLayout
@@ -38,6 +38,10 @@
             android:layout_height="match_parent"
             android:layout_width="100dp"
             android:divider="@null"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:textDirection="rtl"
+            android:scrollbars="none"
             android:dividerHeight="0dp">
         </ListView>
     </LinearLayout>

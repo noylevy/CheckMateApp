@@ -109,7 +109,7 @@ public class suggestionsList extends Activity {
 
         @Override
         protected String doInBackground(String... urls) {
-            android.os.Debug.waitForDebugger();
+            //android.os.Debug.waitForDebugger();
 
             URL url;
             HttpURLConnection urlConnection = null;

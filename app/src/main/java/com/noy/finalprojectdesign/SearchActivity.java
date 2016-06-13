@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -220,7 +221,7 @@ public class SearchActivity extends Activity {
         @Override
         protected String doInBackground(String... urls) {
             Log.d("SEARCH_START", "start");
-            android.os.Debug.waitForDebugger();
+            //android.os.Debug.waitForDebugger();
 
             URL url;
             HttpURLConnection urlConnection = null;
