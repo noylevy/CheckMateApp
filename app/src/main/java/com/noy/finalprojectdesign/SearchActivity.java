@@ -159,7 +159,7 @@ public class SearchActivity extends Activity {
                 String lat = data.findPath("LAT").asText();
                 JsonNode types = data.findPath("TYPES");*/
 
-                progressBar.setVisibility(View.VISIBLE);
+                //progressBar.setVisibility(View.VISIBLE);
 
                 String time[] = SearchActivity.tet.getText().toString().split(":");
                 String date[] = det.getText().toString().split("/");
@@ -170,22 +170,25 @@ public class SearchActivity extends Activity {
                         getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
-                    try {
-                        String data = new GetDataFromServer(calendar, locLat, progressBar).execute().get();
-                        Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
-                        intent.putExtra("suggestions", data);
-                        startActivity(intent);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                    new GetDataFromServer(calendar, locLat, progressBar).execute();
+//
+//                    try {
+//                        //String data = new GetDataFromServer(calendar, locLat, progressBar).execute().get();
+//                        new GetDataFromServer(calendar, locLat, progressBar).execute();
+//                        Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
+//                        intent.putExtra("suggestions", data);
+//                        startActivity(intent);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    } catch (ExecutionException e) {
+//                        e.printStackTrace();
+//                    }
 
                 } else {
                     Toast.makeText(getApplicationContext(), "There is no internet connection", Toast.LENGTH_LONG);
                 }
 
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
 /*                Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
                 startActivity(intent);*/
             }
@@ -301,6 +304,10 @@ public class SearchActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             Log.d("SEARCH_RESULTS", result);
+            progressBar.setVisibility(View.GONE);
+            Intent intent = new Intent(SearchActivity.this, suggestionsList.class);
+            intent.putExtra("suggestions", result);
+            startActivity(intent);
         }
 
         public JSONArray prepareDataToServer(Calendar cal) {
@@ -339,8 +346,6 @@ public class SearchActivity extends Activity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            progressBar.setVisibility(View.GONE);
 
             return jarray;
         }
