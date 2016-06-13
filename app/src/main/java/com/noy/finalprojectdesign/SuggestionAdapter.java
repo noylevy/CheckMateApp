@@ -243,7 +243,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
                 bmImage.setImageResource(R.drawable.place);
             } else {
                 int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, bmImage.getContext().getResources().getDisplayMetrics());
-                int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, bmImage.getContext().getResources().getDisplayMetrics());
+                int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 65, bmImage.getContext().getResources().getDisplayMetrics());
                 bmImage.getLayoutParams().height = height;
                 bmImage.getLayoutParams().width = width;
                 bmImage.setImageBitmap(result);
