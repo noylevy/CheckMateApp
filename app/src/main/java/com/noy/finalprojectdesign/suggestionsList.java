@@ -2,22 +2,17 @@ package com.noy.finalprojectdesign;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.noy.finalprojectdesign.Model.Checkin;
-import com.noy.finalprojectdesign.Model.Model;
+import com.noy.finalprojectdesign.Model.EmotionsPlace;
+import com.noy.finalprojectdesign.Model.Place;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,21 +24,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class suggestionsList extends Activity {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    public static List<String> unlikeList;
-    public static List<String> likeList;
+    public static List<EmotionsPlace> dislikeList;
+    public static List<EmotionsPlace> likeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +68,8 @@ public class suggestionsList extends Activity {
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(mRecyclerView);
 
-        unlikeList = new LinkedList<String>();
-        likeList = new LinkedList<String>();
+        dislikeList = new LinkedList<EmotionsPlace>();
+        likeList = new LinkedList<EmotionsPlace>();
     }
 
     @Override
@@ -90,20 +80,19 @@ public class suggestionsList extends Activity {
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            new SendActionsToServer(unlikeList, likeList).execute();
+            new SendActionsToServer(dislikeList, likeList).execute();
         } else {
             Log.d("SEARCH_SERVER", "no connection");
         }
     }
 
-
     private class SendActionsToServer extends AsyncTask<String, Void, String> {
 
-        protected List<String> unlikeList;
-        protected List<String> likeList;
+        protected List<EmotionsPlace> dislikeList;
+        protected List<EmotionsPlace> likeList;
 
-        public SendActionsToServer(List<String> unlikeList, List<String> likeList){
-            this.unlikeList = unlikeList;
+        public SendActionsToServer(List<EmotionsPlace> unlikeList, List<EmotionsPlace> likeList){
+            this.dislikeList = unlikeList;
             this.likeList = likeList;
         }
 
@@ -116,8 +105,8 @@ public class suggestionsList extends Activity {
             StringBuilder jsonResults = new StringBuilder();
 
             try {
-                //TODO change url?!
                 url = new URL("http://checkmatep-sikole.rhcloud.com/Emotions");
+                //url = new URL("http://localhost:9000/Emotions");
                 //TODO can open connection - toast and return to search.
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("POST");
@@ -127,45 +116,44 @@ public class suggestionsList extends Activity {
                 OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
 
                 JSONArray userActions = new JSONArray();
-                for (String id: unlikeList) {
+                for (EmotionsPlace place: dislikeList) {
                     JSONObject curr = new JSONObject();
-                    curr.put("action", -1);
-                    curr.put("id", id);
+                    curr.put("ACTION", "0");
+                    curr.put("PLACE_ID", place.getPlaceId());
+                    curr.put("GOOG_TYPE", place.getGoogleType());
                     userActions.put(curr);
                 }
 
-                for (String id: likeList) {
+                for (EmotionsPlace place: likeList) {
                     JSONObject curr = new JSONObject();
-                    curr.put("action", 1);
-                    curr.put("id", id);
+                    curr.put("ACTION", "1");
+                    curr.put("PLACE_ID", place.getPlaceId());
+                    curr.put("GOOG_TYPE", place.getGoogleType());
                     userActions.put(curr);
                 }
 
-                unlikeList.clear();
+                dislikeList.clear();
                 likeList.clear();
 
-                wr.write(userActions.toString());
-                //urlConnection.setRequestProperty("Connection", "keep-alive");
+                JSONObject obj = new JSONObject();
+                //TODO: get real user id
+                obj.put("USER_ID", 1);
+                obj.put("EMOTIONS", userActions);
+                wr.write(obj.toString());
+                wr.flush();
+                wr.close();
 
                 int status = urlConnection.getResponseCode();
 
-                InputStream in = urlConnection.getInputStream();
-                InputStreamReader isw = new InputStreamReader(in);
+                //TODO: get data resposne...
+                if (status == 200) {
+                    Log.d("USER_ACTIONS_SERVER", jsonResults.toString());
 
-                int d = isw.read();
-                char[] buff = new char[1024];
-                //TODO ArrayIndexOutOfBoundsException
-                while (d != -1) {
-                    jsonResults.append(buff, 0, d);
-                    d = isw.read();
+                    return "true";
                 }
-
-             /*   wr.flush();
-                wr.close();
-*/
-                Log.d("USER_ACTIONS_SERVER", jsonResults.toString());
-
-                return jsonResults.toString();
+                else{
+                    return "false";
+                }
             } catch (IOException e) {
                 return "Unable to retrieve web page. URL may be invalid.";
             } catch (Exception e) {
