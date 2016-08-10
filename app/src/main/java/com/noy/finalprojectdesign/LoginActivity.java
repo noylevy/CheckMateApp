@@ -110,7 +110,7 @@ public class LoginActivity extends Activity {
                         data.put("USER_ID", loginResult.getAccessToken().getUserId());
                         data.put("TOKEN", loginResult.getAccessToken().getToken());
 
-                        url = new URL("http://checkmatep-sikole.rhcloud.com/login");
+                        url = new URL("http://checkmatep-sikole.rhcloud.com/Login");
                         urlConnection = (HttpURLConnection)url.openConnection();
                         urlConnection.setRequestMethod("POST");
                         urlConnection.setRequestProperty("Content-Type", "application/json");

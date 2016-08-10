@@ -21,6 +21,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -211,6 +217,54 @@ public class Model {
         task.execute();
     }
 
+    public void saveCheckinsOnServer(final SimpleSuccessListener listener, final JSONArray checkins) {
+        class SaveCheckinsAsyncTask extends AsyncTask<String, String, Long> {
+            @Override
+            protected Long doInBackground(String... params) {
+                HttpURLConnection urlConnection = null;
+                URL url;
+                Long result = new Long(-1);
+                try {
+                    JSONObject data = new JSONObject();
+                    data.put("CHECKINS", checkins);
+
+                    url = new URL("http://checkmatep-sikole.rhcloud.com/Checkins");
+                    urlConnection = (HttpURLConnection)url.openConnection();
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    urlConnection.setRequestProperty("Charset", "UTF-8");
+                    urlConnection.setRequestProperty("Accept-Charset", "UTF-8");
+                    OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+                    String ds = data.toString();
+                    wr.write(ds);
+                    wr.flush();
+                    wr.close();
+
+                    result = new Long(urlConnection.getResponseCode());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (ProtocolException e) {
+                    e.printStackTrace();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(Long id) {
+                super.onPostExecute(id);
+                listener.onResult(id > -1);
+            }
+        }
+
+        SaveCheckinsAsyncTask task = new SaveCheckinsAsyncTask();
+        task.execute();
+    }
+
     public void getCheckinsFromFacebook() {
         if(AccessToken.getCurrentAccessToken() != null) {
             //"me/tagged_places?fields=created_time,place{name,category_list,location}"
@@ -233,6 +287,12 @@ public class Model {
                                 JSONObject data = response.getJSONObject();
                                 JSONArray checkInsJson = data.getJSONArray("data");
                                 Calendar lastSyncCal = Utils.parseTimestampToCal(lastSync);
+
+                                saveCheckinsOnServer(new SimpleSuccessListener() {
+                                    @Override
+                                    public void onResult(boolean result) {
+                                    }
+                                },checkInsJson);
 
                                 boolean newCheckins = true;
                                 //TODO: check if new with the paging......
