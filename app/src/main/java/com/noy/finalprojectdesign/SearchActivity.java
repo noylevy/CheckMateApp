@@ -231,9 +231,8 @@ public class SearchActivity extends Activity {
             StringBuilder jsonResults = new StringBuilder();
             String result = "no results:(";
             try {
-
                 JSONObject data = new JSONObject();
-                data.put("USER_ID", 1);
+                data.put("USER_ID", Model.getInstance().getUserId());
                 data.put("TIME", cal.getTimeInMillis());
                 data.put("LNG", latLng.longitude);
                 data.put("LAT", latLng.latitude);

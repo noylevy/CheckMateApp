@@ -38,7 +38,7 @@ public class Model {
     private SharedPreferences sharedPrefs;
     private final static String PREF_FILE = "PREF_FILE";
     private final static String LAST_SYNC_TIME = "LAST_SYNC_TIME";
-
+    private final static String USER_ID = "USER_ID";
     ModelSql local = new ModelSql();
 
     private Model() {
@@ -266,6 +266,15 @@ public class Model {
     public void setLastSyncTime(String timestamp) {
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putString(LAST_SYNC_TIME, timestamp);
+        editor.commit();
+    }
+
+    public String getUserId() {
+        return sharedPrefs.getString(USER_ID, null);
+    }
+    public void setUserId(String userId) {
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putString(USER_ID, userId);
         editor.commit();
     }
 

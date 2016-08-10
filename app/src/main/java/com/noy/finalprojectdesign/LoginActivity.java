@@ -21,8 +21,18 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.noy.finalprojectdesign.Model.Model;
+import com.noy.finalprojectdesign.Model.User;
 import com.noy.finalprojectdesign.Receivers.AlarmReceiver;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -91,6 +101,37 @@ public class LoginActivity extends Activity {
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
+                    Model.getInstance().setUserId(loginResult.getAccessToken().getUserId());
+
+                    HttpURLConnection urlConnection = null;
+                    URL url;
+                    try {
+                        JSONObject data = new JSONObject();
+                        data.put("USER_ID", loginResult.getAccessToken().getUserId());
+                        data.put("TOKEN", loginResult.getAccessToken().getToken());
+
+                        url = new URL("http://checkmatep-sikole.rhcloud.com/login");
+                        urlConnection = (HttpURLConnection)url.openConnection();
+                        urlConnection.setRequestMethod("POST");
+                        urlConnection.setRequestProperty("Content-Type", "application/json");
+                        urlConnection.setRequestProperty("Charset", "UTF-8");
+                        urlConnection.setRequestProperty("Accept-Charset", "UTF-8");
+                        OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+                        String ds = data.toString();
+                        wr.write(ds);
+                        wr.flush();
+                        wr.close();
+
+                        int i = urlConnection.getResponseCode();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (ProtocolException e) {
+                        e.printStackTrace();
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
