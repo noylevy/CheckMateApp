@@ -106,7 +106,7 @@ public class suggestionsList extends Activity {
 
             try {
                 url = new URL("http://checkmatep-sikole.rhcloud.com/Emotions");
-                //url = new URL("http://localhost:9000/Emotions");
+                //url = new URL("http://192.168.1.17:9000/Emotions");
                 //TODO can open connection - toast and return to search.
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("POST");

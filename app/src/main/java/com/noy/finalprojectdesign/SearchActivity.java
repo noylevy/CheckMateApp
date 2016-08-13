@@ -239,6 +239,7 @@ public class SearchActivity extends Activity {
                 data.put("TYPES", prepareDataToServer(cal));
 
                 url = new URL("http://checkmatep-sikole.rhcloud.com/Recommandations");
+                //url = new URL("http://192.168.1.17:9000/Recommandations");
                 urlConnection = (HttpURLConnection)url.openConnection();
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json");

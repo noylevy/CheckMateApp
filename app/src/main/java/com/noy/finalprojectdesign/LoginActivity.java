@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -102,36 +103,12 @@ public class LoginActivity extends Activity {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
                     Model.getInstance().setUserId(loginResult.getAccessToken().getUserId());
-
-                    HttpURLConnection urlConnection = null;
-                    URL url;
-                    try {
-                        JSONObject data = new JSONObject();
-                        data.put("USER_ID", loginResult.getAccessToken().getUserId());
-                        data.put("TOKEN", loginResult.getAccessToken().getToken());
-
-                        url = new URL("http://checkmatep-sikole.rhcloud.com/Login");
-                        urlConnection = (HttpURLConnection)url.openConnection();
-                        urlConnection.setRequestMethod("POST");
-                        urlConnection.setRequestProperty("Content-Type", "application/json");
-                        urlConnection.setRequestProperty("Charset", "UTF-8");
-                        urlConnection.setRequestProperty("Accept-Charset", "UTF-8");
-                        OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
-                        String ds = data.toString();
-                        wr.write(ds);
-                        wr.flush();
-                        wr.close();
-
-                        int i = urlConnection.getResponseCode();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    } catch (ProtocolException e) {
-                        e.printStackTrace();
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    Model.getInstance().saveUserOnServer(new Model.SimpleSuccessListener() {
+                        @Override
+                        public void onResult(boolean result) {
+                            Log.d("Login","saved user");
+                        }
+                    },loginResult.getAccessToken().getUserId(),loginResult.getAccessToken().getToken());
                 }
 
                 @Override
