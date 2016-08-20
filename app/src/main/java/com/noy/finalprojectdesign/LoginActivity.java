@@ -40,6 +40,8 @@ import java.util.Arrays;
 
 public class LoginActivity extends Activity {
     private static final String TAGGED_PLACES_PERMISSION = "user_tagged_places";
+    private static final String USER_BIRTHDAY_PERMISSION = "user_birthday";
+
     private LoginButton loginButton;
     private AccessTokenTracker accessTokenTracker;
     private CallbackManager callbackManager;
@@ -98,7 +100,7 @@ public class LoginActivity extends Activity {
             callbackManager = CallbackManager.Factory.create();
 
             loginButton = (LoginButton) findViewById(R.id.login_button);
-            loginButton.setReadPermissions(Arrays.asList(TAGGED_PLACES_PERMISSION));
+            loginButton.setReadPermissions(Arrays.asList(TAGGED_PLACES_PERMISSION,USER_BIRTHDAY_PERMISSION));
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
