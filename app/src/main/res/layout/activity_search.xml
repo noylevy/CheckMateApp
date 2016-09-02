@@ -68,7 +68,7 @@
         android:id="@+id/searchBtn"
         android:layout_width="120dp"
         android:layout_height="60dp"
-        style="@style/Widget.AppCompat.Button.Colored"
+        style="@style/AppTheme"
         android:textSize="20dp"
         android:text="חפש"/>
 

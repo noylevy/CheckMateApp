@@ -164,7 +164,7 @@ public class SearchActivity extends Activity {
                 String time[] = SearchActivity.tet.getText().toString().split(":");
                 String date[] = det.getText().toString().split("/");
                 Calendar calendar = Calendar.getInstance();
-                calendar.set(new Integer(date[0]), new Integer(date[1]), new Integer(date[2]), new Integer(time[0]), new Integer(time[1]));
+                calendar.set(new Integer(date[2]), new Integer(date[1]), new Integer(date[0]), new Integer(time[0]), new Integer(time[1]));
 
                 ConnectivityManager connMgr = (ConnectivityManager)
                         getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -238,8 +238,11 @@ public class SearchActivity extends Activity {
                 data.put("LAT", latLng.latitude);
                 data.put("TYPES", prepareDataToServer(cal));
 
+/*
                 url = new URL("http://checkmatep-sikole.rhcloud.com/Recommandations");
+*/
                 //url = new URL("http://192.168.1.17:9000/Recommandations");
+                url = new URL("http://localhost:9000/Recommandations");
                 urlConnection = (HttpURLConnection)url.openConnection();
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json");

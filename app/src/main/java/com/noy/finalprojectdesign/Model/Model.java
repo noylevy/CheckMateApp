@@ -229,8 +229,9 @@ public class Model {
                     data.put("USER_ID", Model.getInstance().getUserId());
                     data.put("CHECKINS", checkins);
 
-                    url = new URL("http://checkmatep-sikole.rhcloud.com/Checkins");
+                    //url = new URL("http://checkmatep-sikole.rhcloud.com/Checkins");
                     //url = new URL("http://192.168.1.17:9000/Checkins");
+                    url = new URL("http://localhost:9000/Checkins");
                     urlConnection = (HttpURLConnection)url.openConnection();
                     urlConnection.setRequestMethod("POST");
                     urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -279,8 +280,9 @@ public class Model {
                     data.put("USER_ID", userId);
                     data.put("TOKEN", token);
 
-                    url = new URL("http://checkmatep-sikole.rhcloud.com/Login");
+                    //url = new URL("http://checkmatep-sikole.rhcloud.com/Login");
                     //url = new URL("http://192.168.1.17:9000/Login");
+                    url = new URL("http://localhost:9000/Login");
                     urlConnection = (HttpURLConnection)url.openConnection();
                     urlConnection.setRequestMethod("POST");
                     urlConnection.setRequestProperty("Content-Type", "application/json");
