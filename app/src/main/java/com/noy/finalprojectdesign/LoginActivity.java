@@ -18,6 +18,8 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.noy.finalprojectdesign.Model.Model;
@@ -103,14 +105,32 @@ public class LoginActivity extends Activity {
             loginButton.setReadPermissions(Arrays.asList(TAGGED_PLACES_PERMISSION,USER_BIRTHDAY_PERMISSION));
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
-                public void onSuccess(LoginResult loginResult) {
+                public void onSuccess(final LoginResult loginResult) {
                     Model.getInstance().setUserId(loginResult.getAccessToken().getUserId());
-                    Model.getInstance().saveUserOnServer(new Model.SimpleSuccessListener() {
-                        @Override
-                        public void onResult(boolean result) {
-                            Log.d("Login","saved user");
-                        }
-                    },loginResult.getAccessToken().getUserId(),loginResult.getAccessToken().getToken());
+                    GraphRequest request = GraphRequest.newMeRequest(
+                            loginResult.getAccessToken(),
+                            new GraphRequest.GraphJSONObjectCallback() {
+                                @Override
+                                public void onCompleted(JSONObject object, GraphResponse response) {
+                                    try {
+                                        final String name = object.getString("name");
+                                        final String gender = object.getString("gender");
+                                        final String birthday = object.getString("birthday"); // 01/31/1980 format
+                                        Model.getInstance().saveUserOnServer(new Model.SimpleSuccessListener() {
+                                            @Override
+                                            public void onResult(boolean result) {
+                                                Log.d("Login","saved user " + name + " " + gender + " " + birthday);
+                                            }
+                                        },loginResult.getAccessToken().getUserId(),loginResult.getAccessToken().getToken(),name,gender,birthday);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                    Bundle parameters = new Bundle();
+                    parameters.putString("fields", "id,name,gender,birthday");
+                    request.setParameters(parameters);
+                    request.executeAsync();
                 }
 
                 @Override

@@ -268,7 +268,7 @@ public class Model {
         task.execute();
     }
 
-    public void saveUserOnServer(final SimpleSuccessListener listener, final String userId, final String token) {
+    public void saveUserOnServer(final SimpleSuccessListener listener, final String userId, final String token,final String name, final String gender, final String birthday) {
         class SaveUserAsyncTask extends AsyncTask<String, String, Long> {
             @Override
             protected Long doInBackground(String... params) {
@@ -278,6 +278,9 @@ public class Model {
                 try {
                     JSONObject data = new JSONObject();
                     data.put("USER_ID", userId);
+                    data.put("NAME", name);
+                    data.put("GENDER", gender);
+                    data.put("BIRTH_DATE", birthday);
                     data.put("TOKEN", token);
 
                     //url = new URL("http://checkmatep-sikole.rhcloud.com/Login");
