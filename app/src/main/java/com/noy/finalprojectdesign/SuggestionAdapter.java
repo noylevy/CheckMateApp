@@ -44,7 +44,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
-        public TextView id,name,address,phone,type;
+        public TextView id,name,address,phone,type,distance;
         public int chosenGoogleType;
         public ListView hours;
         public ToggleButton like;
@@ -59,6 +59,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
             name = (TextView) v.findViewById(R.id.placeName);
             address = (TextView) v.findViewById(R.id.placeAddress);
             phone = (TextView) v.findViewById(R.id.placePhone);
+            distance = (TextView) v.findViewById(R.id.placeDistance);
             type = (TextView) v.findViewById(R.id.placeTypeName);
             hours = (ListView) v.findViewById(R.id.placeHours);
             image = (ImageView) v.findViewById(R.id.placeImage);
@@ -170,9 +171,12 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
                 String chosenType = jo.getString("name");
                 int chosenTypeId = jo.getInt("id");
                 String photo = jPlace.getString("photo");
+                double distance = jPlace.getDouble("distance");
+
+
                 place = new Place(placeId, name, address,
                             phoneNumber,  openHoursText,
-                            chosenTypeId,  chosenType,  photo);
+                            chosenTypeId,  chosenType, photo, distance);
 
                 this.lPlaces.add(place);
             } catch (JSONException e) {
@@ -196,6 +200,9 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Vi
         holder.name.setText(place.getName());
         holder.address.setText(place.getAddress());
         holder.phone.setText(place.getPhoneNumber());
+        int dis = (int) (place.getDistance()*100);
+        //holder.distance.setText(Double.toString(Math.round(place.getDistance() * 1000)/ 1000));
+        holder.distance.setText(Double.toString(dis/ 100.0));
         holder.type.setText(place.getChosenType());
         holder.chosenGoogleType = place.getChosenTypeId();
 

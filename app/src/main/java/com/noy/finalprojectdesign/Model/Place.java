@@ -8,6 +8,7 @@ public class Place {
     private String name;
     private String address;
     private String phoneNumber;
+    private double distance;
     private String[] openHoursText;
     private int chosenTypeId;
     private String chosenType;
@@ -16,7 +17,7 @@ public class Place {
 
     public Place(String placeId, String name, String address,
                  String phoneNumber, String[] openHoursText,
-                 int chosenTypeId, String chosenType, String photo) {
+                 int chosenTypeId, String chosenType, String photo, double distance) {
         this.placeId = placeId;
         this.name = name;
         this.address = address;
@@ -25,6 +26,7 @@ public class Place {
         this.chosenTypeId = chosenTypeId;
         this.chosenType = chosenType;
         this.photo = photo;
+        this.distance = distance;
     }
 
     public String getAddress() {
@@ -98,5 +100,13 @@ public class Place {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 }

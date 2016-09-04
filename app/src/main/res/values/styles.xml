@@ -3,7 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Material.Light">
         <!-- Customize your theme here. -->
-        <item name="android:actionBarTheme">@color/primary_dark</item>
+        <item name="android:actionBarTheme">@style/ActionBar.Solid.Ribbit</item>
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:colorPrimaryDark">@color/primary_dark</item>
         <item name="android:colorAccent">@color/accent</item>
@@ -13,6 +13,19 @@
         <item name="android:divider">@color/divider</item>
         <item name="android:navigationBarColor">@color/primary_dark</item>
         <item name="android:statusBarColor">@color/primary_text</item>
+        <item name="android:actionBarTabTextStyle">@color/icons</item>
     </style>
+    <style name="ActionBar.Solid.Ribbit" parent="@style/AppTheme">
+        <item name="android:actionBarTheme">@color/primary_dark</item>
+        <item name="android:textColorPrimary">@color/icons</item>
+    </style>
+<!--
+
+
+    <style name="AppTheme.ActionBarStyle" parent="android:Theme.Material.Light">
+        <item name="android:actionBarTheme">@color/primary_dark</item>
+        <item name="android:textColorPrimary">@color/icons</item>
+    </style>
+-->
 
 </resources>
